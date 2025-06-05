@@ -4,27 +4,35 @@ import datetime
 
 
 class Transaksi:
-    def __init__(self, tipe, jumlah, dari=None, ke=None):
+    def __init__(self, tipe, jumlah, dari=None, ke=None, lokasi="Mobile Banking", catatan=""):
         self.id = str(uuid.uuid4())
-        self.tipe = tipe  # 'tarik' atau 'transfer'
+        self.tipe = tipe
         self.jumlah = jumlah
         self.dari = dari
         self.ke = ke
+        self.lokasi = lokasi
+        self.catatan = catatan
         self.waktu = datetime.datetime.now()
 
     def ringkas(self):
         return f"[{self.waktu.strftime('%Y-%m-%d %H:%M:%S')}] {self.tipe.upper()} - Rp{self.jumlah:,}"
 
-    def detail(self):
-        return {
-            "id": self.id,
-            "waktu": self.waktu.strftime('%Y-%m-%d %H:%M:%S'),
-            "tipe": self.tipe,
-            "jumlah": self.jumlah,
-            "dari": self.dari,
-            "ke": self.ke
-        }
-
+    def format_detail(self):
+        waktu_str = self.waktu.strftime('%d %B %Y %H:%M:%S')
+        tipe_str = "TARIK TUNAI" if self.tipe == "tarik" else "TRANSFER"
+        return (
+            f"\n========== DETAIL TRANSAKSI ==========\n"
+            f"ID Transaksi : {self.id}\n"
+            f"Tanggal      : {waktu_str}\n"
+            f"Tipe         : {tipe_str}\n"
+            f"Jumlah       : Rp{self.jumlah:,}\n"
+            f"Dari         : {self.dari}\n"
+            f"Ke           : {self.ke if self.ke else '-'}\n"
+            f"Status       : Berhasil\n"
+            f"Lokasi       : {self.lokasi}\n"
+            f"Catatan      : {self.catatan if self.catatan else '-'}\n"
+            f"======================================"
+        )
 
 class AkunBank:
     def __init__(self, nama, saldo_awal=0):
@@ -62,9 +70,8 @@ class AkunBank:
     def tampilkan_detail_transaksi(self, id_transaksi):
         for trx in self.riwayat_transaksi:
             if trx.id == id_transaksi:
-                return trx.detail()
+                return trx.format_detail()
         return "Transaksi tidak ditemukan."
-
 
 # =====================
 # === CONTOH UJI COBA ===
