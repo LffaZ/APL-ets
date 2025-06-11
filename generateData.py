@@ -22,7 +22,7 @@ for i in range(1, num_users + 1):
 
     user_data.append([user_id, pin, nama, saldo, login_fail])
 
-logger.tulis_csv("data/nasabah.txt", ["userID", "PIN", "Nama", "NamaIbu", "Saldo"], user_data)
+logger.tulis_csv("data/nasabah.txt", ["userID", "PIN", "Nama", "NamaIbu", "Saldo", "LoginFail"], user_data)
 
 # with open(os.path.join(folder_name, "transaksi.txt"), "w", newline='', encoding='utf-8') as file:
 #     writer = csv.writer(file)

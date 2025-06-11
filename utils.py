@@ -26,6 +26,7 @@ def load_akun(path):
             no_rek = row['userID']
             pin = row['PIN']
             nama = row['Nama']
-            akun = Akun(no_rek, nama, pin)
+            login_fail = row['LoginFail']
+            akun = Akun(no_rek, nama, pin, login_fail)
             daftar_akun[no_rek] = akun
     return daftar_akun
