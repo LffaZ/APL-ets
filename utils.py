@@ -1,5 +1,5 @@
 import shutil
-import csv
+import csv, os
 from akun import Akun
 
 def cprint(text):
@@ -25,3 +25,6 @@ def load_akun(path):
             akun = Akun(no_rek, nama, pin, login_fail)
             daftar_akun[no_rek] = akun
     return daftar_akun
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
