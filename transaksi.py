@@ -215,3 +215,22 @@ class Transaksi:
             time.sleep(2)
             clear_screen()
             self.page_akhir_transaksi()
+
+# Contoh penggunaan
+
+users = {
+    "1001": User("1001", "Ahmad", 1_500_000),
+    "1002": User("1002", "Budi", 2_000_000)
+}
+
+current_user = users["1001"]
+
+transaksi = Transaksi(current_user, users)
+
+# Panggil fungsi tarik tunai
+transaksi.tarik_tunai()
+
+# Panggil fungsi transfer
+transaksi.transfer()
+
+# Setelah transaksi, caller (misal main ATM) yang atur kembali ke menu utama atau keluar
