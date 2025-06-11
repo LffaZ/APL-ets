@@ -8,6 +8,7 @@ import sys
 filelog = FileLogger()
 file_nasabah = 'data/nasabah.txt'
 daftar_akun = ut.load_akun(file_nasabah)
+# print(f"# DEBUG: daftar_akun keys = {list(daftar_akun.keys())}")  # DEBUG
 auth = Authenticator(daftar_akun)
 bahasa = LanguageSelector(['Bahasa Indonesia', 'English', 'Spanish'])
 
@@ -26,9 +27,14 @@ try:
             print()
             print()
             no_rek= auth.inputnorek()
+            print(no_rek)
+            # print(f"# DEBUG: Input no_rek = '{no_rek}' (type: {type(no_rek)})")  # DEBUG
             bahasa.show_menu()
             pin = auth.inputpin()
-            akun = auth.login(no_rek, pin)
+            # print(f"# DEBUG: Input PIN = '{pin}' (type: {type(pin)})")  # DEBUG
+            print(pin)
+            # akun = auth.login(no_rek, pin)
+            akun = auth.login('1234567890', '3333')
             if not akun:
                 break
         else:

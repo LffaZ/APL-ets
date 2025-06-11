@@ -4,6 +4,5 @@ class Akun:
         self.nama = nama
         self.pin = pin
         self.login_fail = login_fail
-
-    def verifikasi_pin(self, input_pin):
-        return self.pin == input_pin
+    def __getitem__(self, key):
+        return getattr(self, key)

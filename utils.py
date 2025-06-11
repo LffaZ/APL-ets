@@ -6,11 +6,6 @@ def cprint(text):
     columns = shutil.get_terminal_size().columns
     print(text.center(columns))
 
-# def cinput(prompt):
-#     columns = shutil.get_terminal_size().columns
-#     print(prompt.center(columns))
-#     return input()
-
 def cinput(prompt):
     columns = shutil.get_terminal_size().columns
     prompt_len = len(prompt)
@@ -26,7 +21,7 @@ def load_akun(path):
             no_rek = row['userID']
             pin = row['PIN']
             nama = row['Nama']
-            login_fail = row['LoginFail']
+            login_fail = row['LoginFail'] if row['LoginFail'] else '0'
             akun = Akun(no_rek, nama, pin, login_fail)
             daftar_akun[no_rek] = akun
     return daftar_akun

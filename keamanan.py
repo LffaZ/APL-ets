@@ -4,34 +4,66 @@
 import hashlib
 import getpass
 from datetime import datetime
+from filelog import FileLogger
+import utils as ut
 import os
 
 class Security:
-    def __init__(self, pin_plain, user_id=None):
-        self.pin = pin_plain
-        self.user_id = user_id
-        self.akun = self.daftar_akun.get(user_id)
-        self.isBanned = self.akun['login_fail'] >= 3
+    def __init__(self, user_id=None):
+        file_nasabah = 'data/nasabah.txt'
+        self.daftar_akun = ut.load_akun(file_nasabah)
+        if user_id is not None:
+            try:
+                print(f"# DEBUG: user_id received = {user_id} (type: {type(user_id)})")  # DEBUG
+                self.akun = self.daftar_akun.get(user_id)
+                # print(f"# DEBUG: akun in security = {self.akun}")  # DEBUG
+                print(self.akun['nama'])
+                if self.akun is None:
+                    ut.cprint('TRANSAKSI TIDAK DAPAT DIPROSES.\nDATA AKUN TIDAK VALID ATAU TIDAK TERDAFTAR')
+                    raise ValueError("Akun tidak ditemukan.")
+                
+                self.pin = self.akun['pin']
+                self.user_id = user_id
+                self.logger = FileLogger()
+                print(f'Pin: {self.pin}')
+                print(f'login_fail: {self.akun['login_fail']}')
+                print(f'Tipe login_fail: {type(self.akun['login_fail'])}')
+                self.isBanned = int(self.akun['login_fail']) >= 3
+                # print(f"# DEBUG: Stored PIN = '{self.pin}' (type: {type(self.pin)})")  # DEBUG
 
-    def verifikasi(self):
-        print("\n--- Verifikasi PIN ---")
-        pin_input = getpass.getpass("Masukkan PIN Anda: ")
+            except ValueError as e:
+                print(f"TRANSAKSI TIDAK DAPAT DIPROSES: {e}")
+                self.akun = None
+                self.pin = None
+                self.isBanned = False
+        else:
+            self.akun = None
+            self.pin = None
+            self.isBanned = False
+
+    def verifikasi(self, pin_input):
+        # print(f"# DEBUG: Input PIN = '{pin_input}' (type: {type(pin_input)})")  # DEBUG
+        pin_input = pin_input or getpass.getpass("Masukkan PIN Anda: ")
+        print(pin_input)
         if pin_input == self.pin:
             if self.isBanned:
-                print("Akun Anda telah diblokir karena terlalu banyak percobaan login gagal.")
-                print("Silakan kunjungi bank terdekat atau hubungi layanan pelanggan untuk membuka blokir.")
+                ut.cprint("Akun Anda telah diblokir karena terlalu banyak percobaan login gagal.")
+                ut.cprint("Silakan kunjungi bank terdekat atau hubungi layanan pelanggan untuk membuka blokir.")
                 return False
             print("PIN benar. Akses transaksi diberikan.\n")
-            self.log_activity("PIN benar. Akses transaksi diberikan.")
+            self.logger.log_per_akun(self.user_id, "Login berhasil")
             return True
         else:
-            self.akun['login_fail'] += 1
+            # print(f"# DEBUG: Login gagal. PIN salah untuk no_rek = {self.akun['no_rek']}")  # DEBUG
+            print(self.akun['no_rek'])
+            self.akun['login_fail'] = int(self.akun['login_fail']) + 1
+            self.logger.log_per_akun(self.user_id, "Login berhasil")
             print("PIN salah. Transaksi dibatalkan.\n")
-            self.log_activity("PIN salah. Transaksi dibatalkan.")
             return False
+        print('ADUH KELUAR BRO')
 
-    def isBanned(self, akun):
-        if akun['login_fail'] >= 3:
+    def isBanned(self):
+        if int(self.akun['login_fail']) >= 3:
             isBanned = True
         else:
             isBanned = False
