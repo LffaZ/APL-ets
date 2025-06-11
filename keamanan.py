@@ -3,29 +3,24 @@
 # security.py
 import hashlib
 import getpass
+from datetime import datetime
+import os
 
 class Security:
-    def _init_(self, pin_plain):
-        """
-        Saat objek dibuat, langsung hash dan simpan PIN-nya.
-        """
-        self.hashed_pin = self.hash_pin(pin_plain)
-
-    def hash_pin(self, pin):
-        """
-        Hashing PIN pakai SHA-256.
-        """
-        return hashlib.sha256(pin.encode()).hexdigest()
+    def __init__(self, pin_plain, user_id=None):
+        self.pin = pin_plain
+        self.user_id = user_id 
 
     def verifikasi(self):
-        """
-        Minta input PIN, lalu cocokkan dengan hashed_pin yang disimpan.
-        """
         print("\n--- Verifikasi PIN ---")
         pin_input = getpass.getpass("Masukkan PIN Anda: ")
-        if self.hash_pin(pin_input) == self.hashed_pin:
+        if pin_input == self.pin:
             print("PIN benar. Akses transaksi diberikan.\n")
+            self.log_activity("PIN benar. Akses transaksi diberikan.")
             return True
         else:
             print("PIN salah. Transaksi dibatalkan.\n")
+            self.log_activity("PIN salah. Transaksi dibatalkan.")
             return False
+    
+    # def isBanned(self):
