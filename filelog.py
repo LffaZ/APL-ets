@@ -1,9 +1,11 @@
+import datetime
 import csv
 import os
 
 class FileLogger:
     def __init__(self, path='log_sistem.txt'):
         self.path = path
+        self.logfolder = 'data/log'
 
     def log(self, pesan):
         with open(self.path, 'a') as f:
@@ -20,3 +22,10 @@ class FileLogger:
     def baca_csv(self, path_csv):
         with open(path_csv, 'r') as f:
             return f.readlines()
+        
+    def log_per_akun(self, norek, pesan):
+        os.makedirs(self.logfolder, exist_ok=True)
+        log_path = os.path.join(self.logfolder, f'log_{norek}.txt')
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open(log_path, 'a', encoding='utf-8') as f:
+            f.write(f"[{timestamp}] {pesan}\n")
