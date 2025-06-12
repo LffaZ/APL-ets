@@ -11,7 +11,7 @@ file_nasabah = 'data/nasabah.txt'
 daftar_akun = ut.load_akun(file_nasabah)
 # print(f"# DEBUG: daftar_akun keys = {list(daftar_akun.keys())}")  # DEBUG
 auth = Authenticator(daftar_akun)
-bahasa = LanguageSelector(['Bahasa Indonesia', 'English', 'Spanish'])
+bahasa = LanguageSelector(['Bahasa Indonesia'])
 transaksi = Transaksi(start_callback=lambda: start(auth, bahasa, transaksi))
 
 def start(auth, bahasa, transaksi):
@@ -19,9 +19,9 @@ def start(auth, bahasa, transaksi):
         while True:
             start(auth, bahasa, transaksi)
             if not auth.session:
-                ut.cprint("SELAMAT DATANG DI BANK BUKANMAKSUDKUBEGITU")
+                ut.cprint("SELAMAT DATANG DI BANK JALI")
                 ut.cprint("------------------------------------------")
-                ut.cprint("WELCOME TO BANK BUKANMAKSUDKUBEGITU")
+                ut.cprint("WELCOME TO BANK JALI")
                 print()
                 print()
                 print()
