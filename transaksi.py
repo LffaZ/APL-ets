@@ -131,7 +131,9 @@ class Transaksi:
             ut.cprint("MENU TRANSFER UANG")
             ut.cprint("=================================")
             ut.cprint("1 <-- TRANSFER KE REKENING LAIN ")
-            ut.cinput('')
+            pilihan = ut.cinput('')
+            if pilihan == "1":
+                self.menu_rekeninglain()
             
             
     def menu_rekeninglain(self):
@@ -142,6 +144,10 @@ class Transaksi:
             self.norek_tujuan = ut.cinput('')
             ut.cprint("1 <-- BENAR          SALAH --> 2")
             pilihan = ut.cinput('')
+            if pilihan == "1":
+                self.menu_rekeningbenar()
+            elif pilihan == "2":
+                continue
 
     def menu_rekeningbenar(self):
         while True:
@@ -152,6 +158,10 @@ class Transaksi:
             self.nominal_tf = int(ut.cinput(''))
             ut.cprint("1 <-- BENAR          SALAH --> 2")
             pilihan = ut.cinput('')
+            if pilihan == "1":
+                self.konfirmasi_transfer()
+            elif pilihan == "2":
+                continue
     
     def konfirmasi_transfer(self):
         while True:
@@ -163,19 +173,24 @@ class Transaksi:
             print(f"DARI REK.    :{self.akun['no_rek']}")
             ut.cprint("1 <-- BENAR          SALAH --> 2")
             pilihan = ut.cinput('')
+            if pilihan == "1":
+                self.logger.log_per_akun(self.akun['no_rek'], f"Transfer Rp{self.nominal_tf} ke {self.norek_tujuan} ({self.akun['nama']})")
+                self.logger.log_per_akun(self.norek_tujuan, f"Menerima transfer Rp{self.nominal_tf} dari {self.akun['no_rek']} ({self.akun['nama']})")
+            elif pilihan == "2":
+                continue
 
-    def bukti_transfer(self):
-        while True:
-            ut.cprint("---------------------------------")
-            ut.cprint("BUKTI TRANSFER")
-            ut.cprint("---------------------------------")
-            print(f"Tanggal      : {tanggal}")
-            print(f"Waktu         : {waktu}")
-            print("TRANSFER ATM")
-            print(f"DARI REK.    : {self.akun['no_rek']}")
-            print(f"NAMA         : {self.akun['nama']}")
-            print(f"KE REK.      : {self.norek_tujuan}")
-            print(f"KEPADA       : {self.tujuan['nama']}")
-            print(f"JUMLAH       : Rp.{self.nominal_tf},00")
-            ut.cprint("---------------------------------")
-            ut.cprint("TERIMAKASIH! ☺️❤️")
+    # def bukti_transfer(self):
+    #     while True:
+    #         ut.cprint("---------------------------------")
+    #         ut.cprint("BUKTI TRANSFER")
+    #         ut.cprint("---------------------------------")
+    #         print(f"Tanggal      : {tanggal}")
+    #         print(f"Waktu         : {waktu}")
+    #         print("TRANSFER ATM")
+    #         print(f"DARI REK.    : {self.akun['no_rek']}")
+    #         print(f"NAMA         : {self.akun['nama']}")
+    #         print(f"KE REK.      : {self.norek_tujuan}")
+    #         print(f"KEPADA       : {self.tujuan['nama']}")
+    #         print(f"JUMLAH       : Rp.{self.nominal_tf},00")
+    #         ut.cprint("---------------------------------")
+    #         ut.cprint("TERIMAKASIH! ☺️❤️")

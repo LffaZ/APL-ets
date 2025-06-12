@@ -12,6 +12,9 @@ class Security:
     def __init__(self, user_id=None):
         file_nasabah = 'data/nasabah.txt'
         self.daftar_akun = ut.load_akun(file_nasabah)
+        self.pinprev_input = 0
+        self.new_pin = 0
+
         if user_id is not None:
             try:
                 # print(f"# DEBUG: user_id received = {user_id} (type: {type(user_id)})")  # DEBUG
@@ -72,23 +75,28 @@ class Security:
         ut.cprint("\n===================================")
         ut.cprint("---------  GANTI PIN ATM  ---------")
         ut.cprint("===================================")
-
-        if not self.verifikasi():
-            print("Verifikasi gagal. Ganti PIN dibatalkan.")
-            return
+        print()
+        ut.cprint('MASUKKAN PIN LAMA ANDA')
+        self.pinprev_input = ut.cinput('')
 
         while True:
-            new_pin = getpass.getpass("Masukkan PIN Baru (4 digit): ")
-            if len(new_pin) != 4 or not new_pin.isdigit():
+            if not self.verifikasi(self.pinprev_input):
+                ut.cprint("VERIFIKASI GAGAL. GANTI PIN DIBATALKAN")
+                break
+
+            ut.cprint('MASUKKAN PIN BARU (4 DIGIT):')
+            self.new_pin = ut.cinput('')
+            if len(self.new_pin) != 4 or not self.new_pin.isdigit():
                 print("PIN baru harus terdiri dari 4 digit angka.")
                 continue
 
-            confirm_pin = getpass.getpass("Konfirmasi PIN Baru: ")
-            if new_pin != confirm_pin:
+            ut.cprint('KONFIRMASI PIN BARU:')
+            confirm_pin = ut.cinput('')
+            if self.new_pin != confirm_pin:
                 print("\nPIN baru yang Anda masukkan tidak cocok. Silakan coba lagi.")
                 continue
 
-            self.akun['pin'] = new_pin
+            self.akun['pin'] = self.new_pin
             self.logger.log_per_akun(self.user_id, "PIN berhasil diganti")
             print("\nPIN berhasil diganti!")
             break
