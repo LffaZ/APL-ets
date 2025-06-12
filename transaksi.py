@@ -1,6 +1,7 @@
 # tarik tunai, transfer (di bank yg sama aja), riwayat transaksi (dibuat ringkas di paging 1-5), detail riwayat transaksi
 import utils as ut
 from manajemen_saldo import Saldo
+from filelog import FileLogger
 from keamanan import Security
 import time
 from datetime import datetime
@@ -10,8 +11,16 @@ class Transaksi:
         self.daftar_akun = ut.load_akun(file_nasabah)
         self.akun = self.daftar_akun.get(no_rek)
         self.saldo = Saldo()
+        self.logger = FileLogger()
+        self.currsaldo = 0
         self.keamanan = Security(no_rek)
         self.start_callback = start_callback
+        self.nominaltarik = 0
+
+        self.norek_tujuan = ''
+        self.tujuan = self.daftar_akun.get(self.norek_tujuan)
+
+        self.nominal_tf = 0
         # print(f"# DEBUG: daftar_akun keys = {list(daftar_akun.keys())}")  # DEBUG
         self.keluar = 0
 
@@ -57,172 +66,116 @@ class Transaksi:
                     self.start_callback()
                 break
             else:
-                jumlah = pilihan
+                self.nominaltarik = int(pilihan)
+                return None
 
-    def tarik_tunai_cust(self, jumlah):
-        if jumlah < 50000 or jumlah % 50000 != 0:
-            print("Nominal tidak valid. Harus kelipatan 50.000.")
-        elif self.akun['saldo'] <= jumlah:
-            ut.cprint('SALDO TIDAK MENCUKUPI')
-            return None
+    def tarik_tunai_cust(self):
+        while True:
+            if self.nominaltarik < 50000 or self.nominaltarik % 50000 != 0:
+                print("NOMINAL TIDAK MENCUKUPI. HARUS KELIPATAN 50.000.")
+                break
+            elif self.akun['saldo'] <= self.nominaltarik:
+                ut.cprint('SALDO TIDAK MENCUKUPI')
+                break
 
-    def tarik_tunai(self, jumlah):
-        ut.cprint('TRANSAKSI ANDA TELAH SELESAI')
-        ut.cprint('APAKAH ANDA INGIN TRANSAKSI LAINNYA?')
-        print()
-        ut.cprint(f'SISA SALDO ANDA: {self.akun['saldo']}')
+            self.akun['saldo'] -= self.nominaltarik
+            
+            self.logger.log_per_akun(self.akun['no_rek'], f"Tarik tunai sebesar Rp{self.nominaltarik}")
 
+            ut.cprint('TRANSAKSI ANDA TELAH SELESAI')
+            ut.cprint('APAKAH ANDA INGIN TRANSAKSI LAINNYA?')
+            print()
+            ut.cprint(f'SISA SALDO ANDA: {self.akun['saldo']}')
 
-        if jumlah < 50000 or jumlah % 50000 != 0:
-            print("Nominal tidak valid. Harus kelipatan 50.000.")
-        elif self.akun['saldo'] >= jumlah:
-            self.akun['saldo'] -= jumlah
-            isi_struk = f"TRANSAKSI PENARIKAN\nNama: {self.akun['nama']}\nJumlah: Rp {jumlah}\nSisa Saldo: Rp {self.akun['saldo']}"
-            write_struk("tarik_tunai", isi_struk)
-            print(f"Silakan ambil uang Anda: Rp {jumlah}")
-            print(f"Sisa saldo: Rp {self.akun['saldo']}")
-            self.log_aktivitas(f"{self.akun['nama']} melakukan penarikan Rp {jumlah}")
-            self.setelah_transaksi()
-        else:
-            print("Saldo tidak mencukupi.")
-            time.sleep(3)
-        ut.clear_screen()
+    def tarik_tunai(self, nominal):
+        while True:
+            if self.akun['saldo'] <= nominal:
+                ut.cprint('SALDO TIDAK MENCUKUPI')
+                break
+            
+            self.akun['saldo'] -= nominal
+            self.logger.log_per_akun(self.akun['no_rek'], f"Tarik tunai sebesar Rp{nominal}")
+            
+            self.log_aktivitas(f"{self.akun['nama']} melakukan penarikan Rp {nominal}")
 
-    def lainnya(self):
-        print('1. TRANSFER UANG')
-        print('2. CEK SALDO')
-        print('3. GANTI PIN')
-        pilihan = input('')
-
-        if pilihan == '1':
-            transfer()
-        elif pilihan == '2':
-            x.cek_saldo
-        elif pilihan == '3':
-            print('ak tau kok error')
-        else:
-            print('Input anda tidak valid')
-            break
+            ut.cprint('TRANSAKSI ANDA TELAH SELESAI')
+            ut.cprint('APAKAH ANDA INGIN TRANSAKSI LAINNYA?')
+            print()
+            ut.cprint(f'SISA SALDO ANDA: {self.akun['saldo']}')
+            ut.clear_screen()
 
     def menu_lainnya(self):
         while True:
             ut.cprint("PILIH TRANSAKSI YANG")
             ut.cprint("ANDA INGINKAN")
             ut.cprint("=================================")
-            ut.cprint("TEKAN <0> UNTUK BATAL\n")
-            ut.cprint("1 <-- GANTI PIN             PENARIKAN TUNAI --> 2")
-            ut.cprint("3 <-- TRANSFER              CEK SALDO --> 4")
-            ut.cprint("5 <-- PEMBAYARAN            MENU SEBELUMNYA --> 6")
-            ut.cprint("7 <-- KELUAR")
+            ut.cprint("1 <-- TRANSFER UANG         CEK SALDO --> 2")
+            ut.cprint("3 <-- GANTI PIN                KELUAR --> 4")
 
-            pilihan = input("\nPILIHAN: ")
-            if pilihan == "0" or pilihan == "7":
-                self.keluar()
-                break
-            elif pilihan == "1":
-                self.ganti_pin()
-            elif pilihan == "2":
-                self.menu_utama()
-            elif pilihan == "3":
+            pilihan = ut.cinput('')
+            if pilihan == "1":
                 self.menu_transfer()
+            elif pilihan == "2":
+                self.saldo.cek_saldo()
+            elif pilihan == "3":
+                self.keamanan.ganti
             elif pilihan == "4":
-                self.cek_saldo()
-            elif pilihan == "5":
-                self.menu_pembayaran()
-            elif pilihan == "6":
-                self.menu_lainnya()
+                break
             else:
-                print("Pilihan tidak tersedia.")
-                time.sleep(2)
+                ut.cprint('PILIHAN TIDAK TERSEDIA')
+                time.sleep(5)
                 ut.clear_screen()
-
-    def menu_lainnya(self):
-        while True:
-            ut.cprint("PILIH TRANSAKSI YANG")
-            ut.cprint("ANDA INGINKAN")
-            ut.cprint("=================================")
-            ut.cprint("TEKAN <0> UNTUK BATAL\n")
-            ut.cprint("1 <-- GANTI PIN             PENARIKAN TUNAI --> 2")
-            ut.cprint("3 <-- TRANSFER              CEK SALDO --> 4")
-            ut.cprint("5 <-- PEMBAYARAN            MENU SEBELUMNYA --> 6")
-            ut.cprint("7 <-- KELUAR")
-
-            pilihan = input("\nPILIHAN: ")
-            if pilihan == "0" or pilihan == "7":
-                self.keluar()
-                break
-            elif pilihan == "1":
-                self.ganti_pin()
-            elif pilihan == "2":
-                self.menu_utama()
-            elif pilihan == "3":
-                self.menu_transfer()
-            elif pilihan == "4":
-                self.cek_saldo()
-            elif pilihan == "5":
-                self.menu_pembayaran()
-            elif pilihan == "6":
-                self.menu_lainnya()
-            else:
-                print("Pilihan tidak tersedia.")
-                time.sleep(2)
 
     def menu_transfer(self):
         while True:
-            ut.cprint("MENU TRANSFER")
+            ut.cprint("MENU TRANSFER UANG")
             ut.cprint("=================================")
-            ut.cprint("TEKAN <0> UNTUK BATAL\n")
-            ut.cprint("1 <-- TRANSFER KE REKENING LAIN      MENU SEBELUMNYA --> 2")
-            ut.cprint("3 <-- KELUAR")
+            ut.cprint("1 <-- TRANSFER KE REKENING LAIN ")
+            ut.cinput('')
+            
             
     def menu_rekeninglain(self):
         while True:
-            ut.cprint("TRANSFER KE REKENING LAIN")
+            ut.cprint("TRANSFER UANG")
             ut.cprint("=================================")
             ut.cprint("MASUKKAN NOMOR REKENING TUJUAN")
+            self.norek_tujuan = ut.cinput('')
             ut.cprint("1 <-- BENAR          SALAH --> 2")
+            pilihan = ut.cinput('')
 
     def menu_rekeningbenar(self):
         while True:
-            ut.cprint("TRANSFER KE REKENING LAIN")
+            ut.cprint("TRANSFER UANG")
             ut.cprint("=================================")
             ut.cprint("MASUKKAN JUMLAH TRANSFER")
             ut.cprint("(MINIMUM 50.000)")
+            self.nominal_tf = int(ut.cinput(''))
             ut.cprint("1 <-- BENAR          SALAH --> 2")
+            pilihan = ut.cinput('')
     
-    def konfirmasi_transfer(self, rek_tujuan, nama, jumlah, rek_asal):
+    def konfirmasi_transfer(self):
         while True:
             ut.cprint("KONFIRMASI TRANSFER")
             ut.cprint("=================================")
-            print("REK. TUJUAN  :{rek_tujuan}")
-            print("NAMA         :{nama}")
-            print("JUMLAH       :Rp.{jumlah},00")
-            print("DARI REK.    :{rek_asal}")
+            print(f"REK. TUJUAN  :{self.norek_tujuan}")
+            print(f"NAMA         :{self.akun['nama']}")
+            print(f"JUMLAH       :Rp.{self.nominal_tf},00")
+            print(f"DARI REK.    :{self.akun['no_rek']}")
             ut.cprint("1 <-- BENAR          SALAH --> 2")
+            pilihan = ut.cinput('')
 
     def bukti_transfer(self):
         while True:
             ut.cprint("---------------------------------")
             ut.cprint("BUKTI TRANSFER")
             ut.cprint("---------------------------------")
-            print("Tanggal      : {tanggal}")
-            print("Waktu         : {waktu}")
+            print(f"Tanggal      : {tanggal}")
+            print(f"Waktu         : {waktu}")
             print("TRANSFER ATM")
-            print("DARI REK.    : {rek_asal}")
-            print("NAMA         : {nama_asal}")
-            print("KE REK.      : {rek_tujuan}")
-            print("KEPADA       : {nama}")
-            print("JUMLAH       : Rp.{jumlah},00")
+            print(f"DARI REK.    : {self.akun['no_rek']}")
+            print(f"NAMA         : {self.akun['nama']}")
+            print(f"KE REK.      : {self.norek_tujuan}")
+            print(f"KEPADA       : {self.tujuan['nama']}")
+            print(f"JUMLAH       : Rp.{self.nominal_tf},00")
             ut.cprint("---------------------------------")
             ut.cprint("TERIMAKASIH! ☺️❤️")
-
-# MANAJEMEN SALDO
-
-    def cek_saldo(self):
-        ut.cprint("INFORMASI SALDO")
-        ut.cprint("=================================")
-        print("SALDO ANDA SEKARANG :")
-        ut.cprint("{self.saldo}")
-        ut.cprint("=================================")
-        ut.cprint("APAKAH ANDA INGIN MELAKUKAN TRANSAKSI LAIN?")
-        ut.cprint("1 <-- YA          TIDAK --> 2")
