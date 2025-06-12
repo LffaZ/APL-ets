@@ -67,3 +67,28 @@ class Security:
             isBanned = True
         else:
             isBanned = False
+
+    def ganti_pin(self):
+        ut.cprint("\n===================================")
+        ut.cprint("---------  GANTI PIN ATM  ---------")
+        ut.cprint("===================================")
+
+        if not self.verifikasi():
+            print("Verifikasi gagal. Ganti PIN dibatalkan.")
+            return
+
+        while True:
+            new_pin = getpass.getpass("Masukkan PIN Baru (4 digit): ")
+            if len(new_pin) != 4 or not new_pin.isdigit():
+                print("PIN baru harus terdiri dari 4 digit angka.")
+                continue
+
+            confirm_pin = getpass.getpass("Konfirmasi PIN Baru: ")
+            if new_pin != confirm_pin:
+                print("\nPIN baru yang Anda masukkan tidak cocok. Silakan coba lagi.")
+                continue
+
+            self.akun['pin'] = new_pin
+            self.logger.log_per_akun(self.user_id, "PIN berhasil diganti")
+            print("\nPIN berhasil diganti!")
+            break
