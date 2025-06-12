@@ -20,9 +20,10 @@ def load_akun(path):
         for row in reader:
             no_rek = row['userID']
             pin = row['PIN']
+            saldo = row['Saldo']
             nama = row['Nama']
             login_fail = row['LoginFail'] if row['LoginFail'] else '0'
-            akun = Akun(no_rek, nama, pin, login_fail)
+            akun = Akun(no_rek, nama, pin, saldo, login_fail)
             daftar_akun[no_rek] = akun
     return daftar_akun
 

@@ -14,7 +14,7 @@ class Security:
         self.daftar_akun = ut.load_akun(file_nasabah)
         if user_id is not None:
             try:
-                print(f"# DEBUG: user_id received = {user_id} (type: {type(user_id)})")  # DEBUG
+                # print(f"# DEBUG: user_id received = {user_id} (type: {type(user_id)})")  # DEBUG
                 self.akun = self.daftar_akun.get(user_id)
                 # print(f"# DEBUG: akun in security = {self.akun}")  # DEBUG
                 print(self.akun['nama'])
@@ -44,7 +44,7 @@ class Security:
     def verifikasi(self, pin_input):
         # print(f"# DEBUG: Input PIN = '{pin_input}' (type: {type(pin_input)})")  # DEBUG
         pin_input = pin_input or getpass.getpass("Masukkan PIN Anda: ")
-        print(pin_input)
+        # print(pin_input)
         if pin_input == self.pin:
             if self.isBanned:
                 ut.cprint("Akun Anda telah diblokir karena terlalu banyak percobaan login gagal.")
