@@ -50,8 +50,8 @@ class Security:
         # print(pin_input)
         if pin_input == self.pin:
             if self.isBanned:
-                ut.cprint("Akun Anda telah diblokir karena terlalu banyak percobaan login gagal.")
-                ut.cprint("Silakan kunjungi bank terdekat atau hubungi layanan pelanggan untuk membuka blokir.")
+                ut.cprint("AKUN ANDA TELAH DIBLOKIR KARENA TERLALU BANYAK PERCOBAAN LOGIN GAGAL.")
+                ut.cprint("SILAKAN KUNJUNGI BANK TERDEKAT ATAU HUBUNGI LAYANAN PELANGGAN UNTUK MEMBUKA BLOKIR.")
                 return False
             print("PIN benar. Akses transaksi diberikan.\n")
             self.logger.log_per_akun(self.user_id, "Login berhasil")
@@ -87,16 +87,16 @@ class Security:
             ut.cprint('MASUKKAN PIN BARU (4 DIGIT):')
             self.new_pin = ut.cinput('')
             if len(self.new_pin) != 4 or not self.new_pin.isdigit():
-                print("PIN baru harus terdiri dari 4 digit angka.")
+                print("PIN BARU HARUS TERDIRI DARI 4 DIGIT ANGKA.")
                 continue
 
             ut.cprint('KONFIRMASI PIN BARU:')
             confirm_pin = ut.cinput('')
             if self.new_pin != confirm_pin:
-                print("\nPIN baru yang Anda masukkan tidak cocok. Silakan coba lagi.")
+                print("\nPIN BARU YANG ANDA MASUKKAN TIDAK COCOK. SILAKAN COBA LAGI.")
                 continue
 
             self.akun['pin'] = self.new_pin
-            self.logger.log_per_akun(self.user_id, "PIN berhasil diganti")
-            print("\nPIN berhasil diganti!")
+            self.logger.log_per_akun(self.user_id, f"PIN diubah. PIN baru: {self.new_pin}")
+            print("\nPIN BERHASIL DIGANTI!")
             break
