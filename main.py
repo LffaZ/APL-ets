@@ -16,7 +16,7 @@ def cinput(prompt):
     print(' ' * start_pos + prompt, end='', flush=True)
     return input()
 
-def close(atm, bank, msg='TRANSAKSI ANDA TELAH SELESAI'):
+def close(atm, bank, msg='UDAH SELESAI TRANSAKSIMU BUB 🥰❤️'):
     cprint(msg)
     cprint("=================================")
     cprint(f'SISA SALDO ANDA:')
