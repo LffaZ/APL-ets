@@ -17,6 +17,8 @@ def cinput(prompt):
     return input()
 
 def close(atm, bank, msg='TRANSAKSI ANDA TELAH SELESAI'):
+    cls()
+    print('\n\n')
     cprint(msg)
     cprint("=================================")
     cprint(f'SISA SALDO ANDA:')
@@ -28,7 +30,7 @@ def close(atm, bank, msg='TRANSAKSI ANDA TELAH SELESAI'):
         print()
         main(atm, bank)
     elif pilihan == "2":
-        #cls()
+        cls()
         start()
 
 def confirm(atm, bank, target_number, amount):
@@ -43,23 +45,24 @@ def confirm(atm, bank, target_number, amount):
         cprint("1 <-- BENAR          SALAH --> 2")
         pilihan = cinput('')
         if pilihan == "1":
-            #cls()
             atm.transfer(target_number, amount, cprint)
             close(atm, bank)
-            # self.bukti_transfer()
         elif pilihan == "2":
-            #cls()
             target_account = None
             transfer(atm,bank)
 
 def transfer(atm, bank):
     while True:
+        cls()
+        print('\n\n')
+
         cprint("MENU TRANSFER UANG")
         cprint("=================================")
         cprint("1 <-- TRANSFER KE REKENING LAIN ")
         pilihan = cinput('')
         if pilihan == "1":
-            #cls()
+            cls()
+            print('\n\n')
             cprint("TRANSFER UANG")
             cprint("=================================")
             cprint("MASUKKAN NOMOR REKENING TUJUAN")
@@ -67,29 +70,33 @@ def transfer(atm, bank):
             cprint("1 <-- BENAR          SALAH --> 2")
             pilihan = cinput('')
             if pilihan == "1":
-                #cls()
+                cls()
+                print('\n\n')
                 cprint("TRANSFER UANG")
                 cprint("=================================")
                 cprint("MASUKKAN JUMLAH TRANSFER")
                 cprint("(MINIMUM 50.000)")
                 amount = int(cinput(''))
                 if amount < 50000:
-                    #cls()
+                    cls()
+                    print('\n\n')
                     cprint('NOMINAL TIDAK MENCUKUPI. HARUS KELIPATAN 50.000.')
                     continue
                 cprint("1 <-- BENAR          SALAH --> 2")
                 pilihan = cinput('')
                 if pilihan == "1":
-                    #cls()
+                    cls()
+                    print('\n\n')
                     confirm(atm, bank, target, amount)
                 elif pilihan == "2":
                     amount = None
                     continue
             elif pilihan == "2":
                 target = None
-                #cls()
                 continue
         else:
+            cls()
+            print('\n\n')
             cprint('PILIHAN TIDAK TERSEDIA')
             continue
 
@@ -103,22 +110,20 @@ def menu_lainnya(atm, bank):
 
         pilihan = cinput('')
         if pilihan == "1":
-            #cls()
             transfer(atm, bank)
         elif pilihan == "2":
-            #cls()
             close(atm, bank)
         elif pilihan == "3":
-            #cls()
             change_pin(atm, bank)
         elif pilihan == "4":
-            #cls()
+            cls()
             start()
         else:
+            cls()
+            print('\n\n')
             cprint('PILIHAN TIDAK TERSEDIA')
-            time.sleep(5)
+            time.sleep(2)
             continue
-            #cls()
 
 def language():
     while True:
@@ -126,7 +131,7 @@ def language():
         cprint('---------------------------')
         cprint('PLEASE SELECT YOUR LANGUAGE')
 
-        cprint('1 <-------- BAHASA INDONESIA               ')
+        print('1 <-------- BAHASA INDONESIA')
         choice = cinput('')
         if choice != '1':
             cprint("TRANSAKSI TIDAK DAPAT DIPROSES.")
@@ -151,14 +156,16 @@ def start():
         cprint("PLEASE INSERT YOUR CARD")
         print('\n\n')
         acc_number = cinput("")
-        #cls()
         if not atm.insert_card(acc_number):
-            # #cls()
+            cls()
             print('\n\n')
             cprint("TRANSAKSI TIDAK DAPAT DIPROSES.\nDATA AKUN TIDAK VALID ATAU TIDAK TERDAFTAR")
             return
+        cls()
         print('\n\n')
         language()
+
+        cls()
         cprint('MASUKKAN NOMOR PIN ANDA:')
         pin = cinput("")
         # print(atm.current_account.isbanned)
@@ -166,7 +173,7 @@ def start():
         #     print('sip')
             
         if not atm.enter_pin(pin, cprint):
-            # #cls()
+            cls()
             print('\n\n')
             cprint("TRANSAKSI TIDAK DAPAT DIPROSES")
             return
@@ -179,7 +186,7 @@ def start():
 def main(atm, bank):
     try:
         while True:
-            #cls()
+            cls()
             print('\n\n')
             cprint("MENU PENARIKAN CEPAT")
             cprint("SILAHKAN PILIH ATAU MASUKKAN JUMLAH PENARIKAN")
@@ -193,76 +200,90 @@ def main(atm, bank):
             choice = cinput('')
 
             if choice == '1':
-                #cls()
+                cls()
                 amount = 100000
                 atm.withdraw(amount, cprint)
                 close(atm, bank)
             elif choice == '2':
-                #cls()
+                cls()
                 amount = 200000
                 atm.withdraw(amount, cprint)
                 close(atm, bank)
             elif choice == '3':
-                #cls()
+                cls()
                 amount = 300000
                 atm.withdraw(amount, cprint)
                 close(atm, bank)
             elif choice == '4':
-                #cls()
+                cls()
                 amount = 500000
                 atm.withdraw(amount, cprint)
                 close(atm, bank)
             elif choice == '5':
-                #cls()
-                # print()
+                cls()
                 amount = 1000000
                 atm.withdraw(amount, cprint)
                 close(atm, bank)
             elif choice == '6':
-                #cls()
+                cls()
+                print('\n\n\n')
                 cprint('FITUR BELUM TERSEDIA')
                 cprint("1 <-------- KEMBALI                KELUAR ----------> 2")
                 choice = cinput('')
                 if choice == '1': 
                     main(atm, bank)
                 else:
+                    cls()
                     start()
 
             elif choice == '7':
-                #cls()
+                cls()
                 menu_lainnya(atm, bank)
             elif choice == '8':
-                # printer.print_receipt(atm.current_account)
+                cls()
                 atm.eject_card()
                 cprint("KARTU DIKELUARKAN, SAMPAI JUMPA!")
+                cls()
                 start()
             else:
-                #cls()
+                cls()
                 amount = int(choice)
                 cprint(f'PENARIKAN SEBESAR RP.{amount}')
                 cprint("1 <-- BENAR          SALAH --> 2")
                 choice = cinput('')
                 if choice == "1":
-                    print()
+                    cls()
+                    print('\n\n\n')
                     atm.withdraw(amount, cprint)
                     close(atm, bank)
                 elif choice == "2":
-                    #cls()
                     continue
     except KeyboardInterrupt:
         print("\nProgram dihentikan oleh user (Ctrl+C). Keluar...")
         sys.exit()
 
 def change_pin(atm, bank):
-    print()
+    cls()
+    print('\n\n')
     cprint("===================================")
     cprint("---------  GANTI PIN ATM  ---------")
     cprint("===================================\n")
     cprint('MASUKKAN PIN LAMA ANDA')
     old_pin_input = cinput('')
 
+    cls()
+    print('\n\n')
+    cprint("===================================")
+    cprint("---------  GANTI PIN ATM  ---------")
+    cprint("===================================\n")
     cprint('MASUKKAN PIN BARU (4 DIGIT):')
     new_pin = cinput('')
+
+    cls()
+    print('\n\n')
+    cprint("===================================")
+    cprint("---------  GANTI PIN ATM  ---------")
+    cprint("===================================\n")
     cprint('KONFIRMASI PIN BARU:')
     confirm_pin = cinput('')
     if new_pin != confirm_pin:
@@ -270,6 +291,7 @@ def change_pin(atm, bank):
         change_pin(atm, bank)
 
     atm.change_pin(old_pin_input, new_pin)
+    cls()
 
 if __name__ == "__main__":
     start()
