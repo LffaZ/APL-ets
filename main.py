@@ -16,7 +16,7 @@ def cinput(prompt):
     print(' ' * start_pos + prompt, end='', flush=True)
     return input()
 
-def close(atm, bank, msg='UDAH SELESAI TRANSAKSIMU BUB 🥰❤️'):
+def close(atm, bank, msg='TRANSAKSI ANDA TELAH SELESAI'):
     cprint(msg)
     cprint("=================================")
     cprint(f'SISA SALDO ANDA:')
@@ -120,6 +120,19 @@ def menu_lainnya(atm, bank):
             continue
             #cls()
 
+def language():
+    while True:
+        cprint('SILAHKAN PILIH BAHASA')
+        cprint('---------------------------')
+        cprint('PLEASE SELECT YOUR LANGUAGE')
+
+        cprint('1 <-------- BAHASA INDONESIA               ')
+        choice = cinput('')
+        if choice != '1':
+            cprint("TRANSAKSI TIDAK DAPAT DIPROSES.")
+            continue
+        return 
+
 
 def start():
     bank = Bank()
@@ -145,6 +158,7 @@ def start():
             cprint("TRANSAKSI TIDAK DAPAT DIPROSES.\nDATA AKUN TIDAK VALID ATAU TIDAK TERDAFTAR")
             return
         print('\n\n')
+        language()
         cprint('MASUKKAN NOMOR PIN ANDA:')
         pin = cinput("")
         # print(atm.current_account.isbanned)
