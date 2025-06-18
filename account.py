@@ -13,19 +13,17 @@ class Account:
 
     def verify_pin(self, input_pin):
         return self.pin == input_pin
-
-    def deposit(self, amount):
-        if amount > 0:
-            self.balance += amount
-            self._add_transaction("Deposit", amount)
-            return True
-        return 
-    
+        # gadi pake depo
+        def deposit(self, amount):
+            if amount > 0:
+                self.balance += amount
+                self._add_transaction("Deposit", amount)
+                return True
+            return 
     def failed_login(self):
         self.failed += 1
         self.isbanned = self.failed >= 3
         return
-
     def transfer(self, target_account, amount):
         if 50000 <= amount <= self.balance:
             self.balance -= amount
@@ -34,17 +32,14 @@ class Account:
             target_account._add_transaction("Transfer In", amount, self)
             return True
         return False
-
     def withdraw(self, amount):
         if 50000 <= amount <= self.balance:
             self.balance -= amount
             self._add_transaction("Withdrawal", amount)
             return True
         return False
-
     def get_balance(self):
         return self.balance
-
     def _add_transaction(self, transaction_type, amount, account=None):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         transaction = {
@@ -62,10 +57,8 @@ class Account:
             }
         self.transaction_log.append(transaction)
         self.save_transaction_log() 
-
     def get_transaction_log(self):
         return self.transaction_log
-
     def save_transaction_log(self):
         log_file_path = f"log/{self.account_number}.txt"
     
@@ -78,7 +71,6 @@ class Account:
                 elif txn['type'] == 'Transfer Out':
                     msg = f"[{txn['time']}] - Transfer Rp{txn['amount']} ke {txn['num']} ({txn['name']}\n"
                 file.write(f'\n{msg}')
-
     def log_action(self, action, additional_info=""):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         os.makedirs('log', exist_ok=True)

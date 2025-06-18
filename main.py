@@ -168,10 +168,6 @@ def start():
         cls()
         cprint('MASUKKAN NOMOR PIN ANDA:')
         pin = cinput("")
-        # print(atm.current_account.isbanned)
-        # if atm.current_account.isbanned == True:
-        #     print('sip')
-            
         if not atm.enter_pin(pin, cprint):
             cls()
             print('\n\n')

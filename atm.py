@@ -9,13 +9,11 @@ class ATM:
 
     def insert_card(self, account_number):
         account = self.bank.find_account(account_number)
-        # print(f"[DEBUG] Found account: {account}")
 
         if account:
             self.current_account = account
             return True
         return False
-
     def failed(self, cprint):
         self.current_account.log_action("Login Failed")
         self.current_account.failed_login()
@@ -24,12 +22,7 @@ class ATM:
         cprint("SILAKAN KUNJUNGI BANK TERDEKAT ATAU HUBUNGI LAYANAN PELANGGAN UNTUK MEMBUKA BLOKIR.")
         time.sleep(5)
         sys.exit()
-
     def enter_pin(self, pin, cprint):
-        # print(f"self.pin: {repr(self.current_account.pin)} (type: {type(self.current_account.pin)})")
-        # print(f"input_pin: {repr(pin)} (type: {type(pin)})")
-        # print(self.current_account.verify_pin('0000'))
-        
         if self.current_account and self.current_account.verify_pin(pin):
             if self.current_account.failed >= 3 :
                 self.failed(cprint)
@@ -42,7 +35,6 @@ class ATM:
             cprint('TRANSAKSI TIDAK DAPAT DIPROSES')
             self.current_account = None
         return False
-    
     def change_pin(self, old_input, new_pin):
         if self.current_account:
             old_pin = self.current_account.pin
@@ -52,7 +44,6 @@ class ATM:
                 self.bank.save_accounts(self.accounts)
             return True
         return False
-
     def withdraw(self, amount, cprint):
         if self.current_account:
             if self.current_account.withdraw(amount):
@@ -61,15 +52,13 @@ class ATM:
             else:
                 cprint("SALDO TIDAK MENCUKUPI")
         return False
-
-    # Depo ga dipakai
-    def deposit(self, amount):
-        if self.current_account:
-            if self.current_account.deposit(amount):
-                print(f"Deposited: {amount}")
-                return True
-        return False
-    
+    #    Depo ga dipakai
+        def deposit(self, amount):
+            if self.current_account:
+                if self.current_account.deposit(amount):
+                    print(f"Deposited: {amount}")
+                    return True
+            return False
     def transfer(self, target_account_number, amount, cprint):
         if self.current_account:
             target_account = self.bank.find_account(target_account_number)
@@ -83,13 +72,11 @@ class ATM:
             else:
                 cprint("TRANSAKSI TIDAK DAPAT DIPROSES. NOMOR REKENING PENERIMA TIDAK VALID ATAU TIDAK TERDAFTAR")
         return False
-
     def check_balance(self):
         if self.current_account:
             balance = self.current_account.get_balance()
             return balance
         return None
-
     def eject_card(self):
         self.current_account = None
 
