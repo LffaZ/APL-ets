@@ -53,13 +53,13 @@ class ATM:
             return True
         return False
 
-    def withdraw(self, amount):
+    def withdraw(self, amount, cprint):
         if self.current_account:
             if self.current_account.withdraw(amount):
                 self.bank.save_accounts(self.accounts)
                 return True
             else:
-                print("Insufficient balance.")
+                cprint("SALDO TIDAK MENCUKUPI")
         return False
 
     # Depo ga dipakai
@@ -79,9 +79,9 @@ class ATM:
                     self.printer.print_receipt(self.current_account, target_account, amount, cprint)
                     return True
                 else:
-                    print("Insufficient balance.")
+                    print("TRANSAKSI TIDAK DAPAT DIPROSES.")
             else:
-                print("Target account not found.")
+                cprint("TRANSAKSI TIDAK DAPAT DIPROSES. NOMOR REKENING PENERIMA TIDAK VALID ATAU TIDAK TERDAFTAR")
         return False
 
     def check_balance(self):
